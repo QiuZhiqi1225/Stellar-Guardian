@@ -1,0 +1,27 @@
+<view class="page-shell">
+  <view class="hero-cover">
+    <view class="hero-kicker">REGISTER</view>
+    <view class="hero-title">创建新账号</view>
+    <view class="hero-text">完成三项信息即可。</view>
+  </view>
+
+  <view class="panel-card panel-card-soft" style="margin-top: 24rpx;">
+    <view class="section-heading">
+      <view class="panel-title">注册</view>
+      <button class="link-button" bindtap="openLogin">去登录</button>
+    </view>
+    <text class="field-label">用户 ID</text>
+    <input class="text-input text-input-strong" value="{{appUserId}}" placeholder="例如 daughter_001" bindinput="handleAppUserIdInput" />
+    <text class="field-label">显示名称</text>
+    <input class="text-input" value="{{displayName}}" placeholder="例如 女儿" bindinput="handleDisplayNameInput" />
+    <text class="field-label">登录口令</text>
+    <input class="text-input" password="{{true}}" value="{{secret}}" placeholder="至少 4 位" bindinput="handleSecretInput" />
+    <text class="field-label">关联对象编号（可选）</text>
+    <input class="text-input" value="{{externalKey}}" placeholder="例如 147852369 或 watch-1001" bindinput="handleExternalKeyInput" />
+    <view class="helper-text">如果你希望这个账号注册后立刻能收到某个对象的告警，这里填一次对象编号即可。</view>
+    <view class="button-row">
+      <button class="primary-button" bindtap="registerUser">创建账号</button>
+    </view>
+    <view class="feedback feedback-soft" wx:if="{{feedback}}">{{feedback}}</view>
+  </view>
+</view>

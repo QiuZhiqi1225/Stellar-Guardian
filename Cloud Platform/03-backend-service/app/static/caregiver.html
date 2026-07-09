@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>家属端语音通话 Demo</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell caregiver-shell">
+      <header class="hero caregiver-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Caregiver Demo</p>
+          <h1>家属端语音通话 Demo</h1>
+          <p class="hero-text">
+            家属端的顺序很简单：先连共享后端，再注册当前设备，然后等待“待接听呼叫”出现，最后点击接听进入语音房间。
+          </p>
+          <p class="hero-links">
+            <a href="/">返回管理控制台</a>
+            <a href="/device-demo">打开设备端演示</a>
+          </p>
+        </div>
+        <div class="hero-status card">
+          <div class="status-row">
+            <span class="status-dot" id="mobile-status-dot"></span>
+            <div>
+              <p class="label">设备注册状态</p>
+              <strong id="mobile-status">未注册</strong>
+            </div>
+          </div>
+          <div class="mini-metrics">
+            <div>
+              <p class="label">当前 APP 用户</p>
+              <strong id="mobile-app-user">-</strong>
+            </div>
+            <div>
+              <p class="label">待接听会话</p>
+              <strong id="mobile-pending-count">0</strong>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid caregiver-grid">
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Tips</p>
+              <h2>操作提示</h2>
+            </div>
+          </div>
+          <div class="helper-grid">
+            <div class="empty-state">
+              <strong>第一步</strong>
+              <p class="panel-note">如果你在第二台电脑上，先把共享后端地址改成主机电脑的对外地址，再点“保存并连接”。</p>
+            </div>
+            <div class="empty-state">
+              <strong>第二步</strong>
+              <p class="panel-note">选择一个可用演示账号后点击“注册到后端”。注册成功后状态会从“未注册”变成“已注册”。</p>
+            </div>
+            <div class="empty-state">
+              <strong>第三步</strong>
+              <p class="panel-note">有待接听呼叫时，点“接听并进入语音”。系统会自动加入同一条会话。</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Shared Backend</p>
+              <h2>共享后端地址</h2>
+            </div>
+          </div>
+          <div class="server-box">
+            <label>
+              <span>当前连接的服务端</span>
+              <input id="mobile-server-base-url" placeholder="例如 http://192.168.1.20:8010" />
+            </label>
+            <div class="button-row">
+              <button class="primary-button" id="mobile-save-server-button" type="button">保存并连接</button>
+              <button class="ghost-button" id="mobile-reset-server-button" type="button">恢复本机</button>
+            </div>
+            <p id="mobile-server-feedback" class="panel-note">
+              第二台电脑要填主机电脑首页显示的“共享主机对外地址”，不能填自己的 127.0.0.1。
+            </p>
+          </div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Background Alert</p>
+              <h2>后台预警守护</h2>
+            </div>
+          </div>
+          <div class="helper-grid">
+            <div class="empty-state">
+              <strong>作用</strong>
+              <p class="panel-note">启用后，就算主窗口最小化或关闭，只要电脑还开着、后台守护在运行，新的紧急告警也会直接弹出本地预警窗口。</p>
+            </div>
+            <div class="empty-state">
+              <strong>建议</strong>
+              <p class="panel-note">先完成“共享后端地址 + 家属账号注册”，再点击下面的“保存并启动后台预警”。如果希望开机后自动工作，再打开“开机自启”。</p>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" id="mobile-agent-save-button" type="button">保存并启动后台预警</button>
+            <button class="ghost-button" id="mobile-agent-startup-on-button" type="button">开启开机自启</button>
+            <button class="ghost-button" id="mobile-agent-startup-off-button" type="button">关闭开机自启</button>
+          </div>
+          <p id="mobile-agent-feedback" class="panel-note">后台预警未启用。</p>
+        </section>
+
+        <section class="card">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Registration</p>
+              <h2>注册当前设备</h2>
+            </div>
+          </div>
+
+          <div class="empty-state">
+            <strong>当前可用演示账号 / 自定义账号说明</strong>
+            <p class="panel-note" id="mobile-demo-hint">正在加载可用家属账号...</p>
+            <div class="button-row" id="mobile-demo-accounts"></div>
+          </div>
+
+          <form id="mobile-register-form" class="form-stack">
+            <label>
+              <span>家属名称</span>
+              <input id="mobile-recipient-name" placeholder="例如 邱智齐妈妈" />
+            </label>
+            <label>
+              <span>APP 用户 ID</span>
+              <input id="mobile-app-user-id" placeholder="例如 qiu_mother_001" />
+            </label>
+            <label>
+              <span>关联对象编号（第一次自定义 ID 时必填）</span>
+              <input id="mobile-external-key" placeholder="例如 147852369 或 elder-1001" />
+            </label>
+            <label>
+              <span>平台</span>
+              <select id="mobile-platform">
+                <option value="android">android</option>
+                <option value="ios">ios</option>
+                <option value="web">web</option>
+              </select>
+            </label>
+            <label>
+              <span>当前设备 Token</span>
+              <input id="mobile-device-token" readonly />
+            </label>
+            <button class="primary-button" type="submit">注册到后端</button>
+          </form>
+          <p id="mobile-register-feedback" class="panel-note"></p>
+        </section>
+
+        <section class="card">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Incoming</p>
+              <h2>待接听呼叫</h2>
+            </div>
+            <button class="ghost-button" id="mobile-refresh-button" type="button">立即刷新</button>
+          </div>
+          <div id="mobile-pending-empty" class="empty-state">当前没有待接听的呼叫。你可以先回主机控制台发送一条测试告警。</div>
+          <div id="mobile-pending-list" class="event-list"></div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">History</p>
+              <h2>最近会话</h2>
+            </div>
+          </div>
+          <div id="mobile-history-empty" class="empty-state">还没有历史会话。</div>
+          <div id="mobile-history-list" class="event-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="alert-overlay" id="caregiver-alert-overlay" aria-hidden="true">
+      <div class="alert-backdrop"></div>
+      <section class="alert-panel" role="alertdialog" aria-modal="true" aria-labelledby="caregiver-alert-title">
+        <p class="alert-kicker">Emergency Alert</p>
+        <h2 class="alert-title" id="caregiver-alert-title">收到新的紧急告警</h2>
+        <p class="alert-message" id="caregiver-alert-message">主机已触发告警，请立即查看并决定是否接听。</p>
+        <div class="alert-meta" id="caregiver-alert-meta"></div>
+        <div class="alert-actions">
+          <button class="primary-button" id="caregiver-alert-accept-button" type="button">立即接听</button>
+          <button class="ghost-button" id="caregiver-alert-dismiss-button" type="button">稍后处理</button>
+          <button class="ghost-button" id="caregiver-alert-reject-button" type="button">拒绝本次</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="/static/api-config.js"></script>
+    <script src="/static/caregiver.js"></script>
+  </body>
+</html>

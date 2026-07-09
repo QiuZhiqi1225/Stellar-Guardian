@@ -1,0 +1,80 @@
+华为云紧急语音呼叫 APP 使用说明
+
+一、启动 APP
+1. 双击 `EmergencyVoiceApp.exe`
+2. 等待桌面窗口打开
+3. 首页会显示“正式账号体系”“对象归属与呼叫对象配置”“测试告警”等功能区
+
+二、新版本的核心逻辑
+1. 每个人先注册自己的独立用户 ID
+2. 被监护对象可以指定一个“所属用户”
+3. 再把其他用户 ID 绑定为这个所属用户的紧急联系人
+4. 当该对象告警时，系统会自动把会话分发给已绑定联系人
+
+三、推荐测试顺序
+1. 在首页“正式账号体系”中先注册两个账号
+   - 例如：`father_001`
+   - 例如：`daughter_001`
+2. 在“对象归属与呼叫对象配置”里创建一个对象
+   - 对象编号：例如 `watch-1001`
+   - 所属用户：选择 `father_001`
+3. 回到“正式账号体系”
+   - 所属用户选择 `father_001`
+   - 紧急联系人用户 ID 填 `daughter_001`
+   - 点击“绑定联系人”
+4. 在家属端电脑中登记 `daughter_001` 这个账号的设备
+5. 发送一条测试告警
+6. 家属端和设备端进入同一条会话进行语音测试
+
+四、双机互通
+1. 选择一台电脑作为主机，先打开 APP
+2. 在主机首页找到“共享主机对外地址”
+   - 例如：`http://192.168.1.20:8010`
+3. 第二台电脑也打开 APP
+4. 在第二台电脑首页、家属端或设备端中，把共享后端地址改成主机地址
+5. 点击“保存并连接”
+6. 这样两台电脑就会连接到同一个后端、同一个数据库、同一个会话系统
+
+五、家属端如何登记设备
+1. 打开“家属端”
+2. 把共享后端地址改成和首页一致
+3. 输入你已经注册好的用户 ID
+   - 例如：`daughter_001`
+4. 输入显示名称
+5. 保存登记
+6. 之后这个账号就能收到属于自己的告警弹窗和通话会话
+
+六、测试真实语音
+1. 首页发送一条测试告警
+2. 家属端点击“接听并进入语音”
+3. 设备端点击“加入设备端语音”
+4. 两端都允许麦克风权限后，即可实时语音通话
+
+七、会话整理
+1. 如果旧测试太多，可点击“只保留最新会话”
+2. 如果要完全重测，可点击“清空全部会话”
+
+八、命令行模式
+- 冒烟测试：
+  `EmergencyVoiceApp.exe --smoke-test`
+
+- 浏览器模式：
+  `EmergencyVoiceApp.exe --browser`
+
+- 指定对外地址：
+  `EmergencyVoiceApp.exe --public-host 192.168.1.20`
+
+- 指定完整公网地址：
+  `EmergencyVoiceApp.exe --public-base-url https://xxxx.trycloudflare.com`
+
+九、跨网公网测试建议
+1. 先准备一个与 `EmergencyVoiceApp.exe` 同目录的 `.env`
+2. 至少配置以下字段：
+   - `PUBLIC_BASE_URL=https://xxxx.trycloudflare.com`
+   - `TWILIO_ACCOUNT_SID=你的SID`
+   - `TWILIO_AUTH_TOKEN=你的TOKEN`
+   - `TWILIO_TURN_ENABLED=true`
+   - `TWILIO_TURN_TTL=3600`
+3. 启动 Cloudflare Tunnel 后，再双击运行 APP，或者使用：
+   `EmergencyVoiceApp.exe --public-base-url https://xxxx.trycloudflare.com`
+4. 房间页日志中如果看到 “Twilio 动态 TURN/STUN 配置” 就说明动态下发已生效

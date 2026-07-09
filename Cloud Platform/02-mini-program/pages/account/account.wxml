@@ -1,0 +1,60 @@
+<view class="page-shell">
+  <view class="hero-cover">
+    <view class="hero-kicker">ACCOUNT HUB</view>
+    <view class="hero-title">账号中心</view>
+    <view class="hero-text">先确认当前账号，再进入注册、登录或设备登记。</view>
+    <view class="hero-badges">
+      <text class="hero-badge">注册</text>
+      <text class="hero-badge">登录</text>
+      <text class="hero-badge">设备登记</text>
+    </view>
+  </view>
+
+  <view class="panel-card panel-card-soft" style="margin-top: 24rpx;">
+    <view class="panel-title">账号中心</view>
+    <view class="panel-subtitle">这里集中管理账号和设备入口。</view>
+    <view class="mini-stat-grid">
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{appUserId || "未登录"}}</view>
+        <view class="mini-stat-label">当前用户</view>
+      </view>
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{displayName || "未设置"}}</view>
+        <view class="mini-stat-label">显示名称</view>
+      </view>
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{recipientName || "未登记"}}</view>
+        <view class="mini-stat-label">告警接收人</view>
+      </view>
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">3</view>
+        <view class="mini-stat-label">可执行操作</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="stack-gap" style="margin-top: 24rpx;">
+    <view class="shortcut-card shortcut-card-primary" bindtap="openRegister">
+      <view class="shortcut-card-title">注册新账号</view>
+      <view class="shortcut-card-text">新建一个家属账号，填写用户 ID、显示名称和登录口令。</view>
+      <view class="shortcut-arrow">打开注册页 →</view>
+    </view>
+
+    <view class="shortcut-card shortcut-card-calm" bindtap="openLogin">
+      <view class="shortcut-card-title">登录现有账号</view>
+      <view class="shortcut-card-text">验证用户 ID 和口令，成功后会把本地状态切到对应账号。</view>
+      <view class="shortcut-arrow">打开登录页 →</view>
+    </view>
+
+    <view class="shortcut-card shortcut-card-warm" bindtap="openDevice">
+      <view class="shortcut-card-title">登记当前设备</view>
+      <view class="shortcut-card-text">把当前小程序端登记成告警接收设备，并可以顺手申请订阅消息权限。</view>
+      <view class="shortcut-arrow">打开设备登记页 →</view>
+    </view>
+  </view>
+
+  <view class="button-row">
+    <button class="ghost-button" bindtap="openSettings">系统配置</button>
+    <button class="ghost-button" bindtap="openHome">返回首页</button>
+  </view>
+</view>

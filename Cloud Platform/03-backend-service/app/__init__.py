@@ -1,0 +1,1 @@
+"""Emergency call backend package."""

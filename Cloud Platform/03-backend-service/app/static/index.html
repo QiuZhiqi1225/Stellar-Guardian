@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>华为云告警语音控制台</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Emergency Voice Console</p>
+          <h1>华为云告警语音控制台</h1>
+          <p class="hero-text">
+            现在这套版本支持“正式账号体系”：每个人先注册自己的独立用户 ID，再把其他人的用户 ID
+            绑定为紧急联系人。对象发生告警后，系统会自动把会话分发给已绑定的联系人。
+          </p>
+          <p class="hero-links">
+            <a href="/caregiver-demo">打开家属端</a>
+            <a href="/device-demo">打开设备端</a>
+          </p>
+        </div>
+        <div class="hero-status card">
+          <div class="status-row">
+            <span class="status-dot" id="status-dot"></span>
+            <div>
+              <p class="label">服务状态</p>
+              <strong id="service-status">加载中</strong>
+            </div>
+          </div>
+          <div class="mini-metrics">
+            <div>
+              <p class="label">派发模式</p>
+              <strong id="dispatch-mode">-</strong>
+            </div>
+            <div>
+              <p class="label">最近事件数</p>
+              <strong id="event-count">0</strong>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Shared Backend</p>
+              <h2>双机连接设置</h2>
+            </div>
+            <button class="ghost-button" id="refresh-button" type="button">刷新状态</button>
+          </div>
+          <div class="helper-grid">
+            <div class="server-box">
+              <label>
+                <span>当前要连接的共享后端地址</span>
+                <input id="server-base-url" placeholder="例如 http://192.168.1.20:8010" />
+              </label>
+              <div class="button-row">
+                <button class="primary-button" id="save-server-button" type="button">保存并连接</button>
+                <button class="ghost-button" id="reset-server-button" type="button">恢复本机</button>
+              </div>
+              <p id="server-feedback" class="panel-note"></p>
+            </div>
+            <div class="server-box">
+              <strong>操作提示</strong>
+              <ol class="tip-list">
+                <li>主机电脑保持本机地址即可，第二台电脑填“共享主机对外地址”。</li>
+                <li>两台电脑都连到同一个后端后，再去打开家属端和设备端。</li>
+                <li>如果测试太多导致会话混乱，可以先使用下面的会话整理按钮。</li>
+              </ol>
+            </div>
+          </div>
+          <div class="endpoint-list">
+            <div class="endpoint">
+              <span>共享主机对外地址</span>
+              <code id="server-public-url">-</code>
+            </div>
+            <div class="endpoint">
+              <span>Webhook URL</span>
+              <code id="webhook-url">-</code>
+            </div>
+            <div class="endpoint">
+              <span>Health</span>
+              <code id="health-url">-</code>
+            </div>
+            <div class="endpoint">
+              <span>Events</span>
+              <code id="events-url">-</code>
+            </div>
+          </div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Quick Start</p>
+              <h2>推荐操作顺序</h2>
+            </div>
+          </div>
+          <div class="helper-grid">
+            <div class="empty-state">
+              <strong>1. 先注册用户账号</strong>
+              <p class="panel-note">每个人先创建自己的独立用户 ID，例如 `father_001`、`daughter_001`。</p>
+            </div>
+            <div class="empty-state">
+              <strong>2. 给对象指定所属人</strong>
+              <p class="panel-note">被监护对象可以归属给某个用户，系统会按这个归属关系去找紧急联系人。</p>
+            </div>
+            <div class="empty-state">
+              <strong>3. 绑定联系人 ID</strong>
+              <p class="panel-note">例如父亲账号下面绑定女儿账号。之后只要父亲对应对象告警，就会自动分发给女儿。</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Account Center</p>
+              <h2>正式账号体系</h2>
+            </div>
+          </div>
+          <div class="account-grid">
+            <form id="user-register-form" class="form-stack server-box">
+              <strong>注册个人账号</strong>
+              <label>
+                <span>个人用户 ID</span>
+                <input id="user-register-id" placeholder="例如 father_001" />
+              </label>
+              <label>
+                <span>显示名称</span>
+                <input id="user-register-name" placeholder="例如 张三父亲" />
+              </label>
+              <label>
+                <span>登录口令</span>
+                <input id="user-register-secret" type="password" placeholder="至少 4 位" />
+              </label>
+              <label>
+                <span>备注</span>
+                <textarea id="user-register-notes" rows="3" placeholder="例如 住址、身份、说明"></textarea>
+              </label>
+              <button class="primary-button" type="submit">注册账号</button>
+            </form>
+
+            <form id="user-login-form" class="form-stack server-box">
+              <strong>校验账号口令</strong>
+              <label>
+                <span>个人用户 ID</span>
+                <input id="user-login-id" placeholder="例如 father_001" />
+              </label>
+              <label>
+                <span>登录口令</span>
+                <input id="user-login-secret" type="password" placeholder="输入你注册时设置的口令" />
+              </label>
+              <button class="ghost-button" type="submit">验证账号</button>
+              <p class="panel-note">
+                这个验证接口主要用于确认“这个 ID 是否已注册、口令是否正确”。当前桌面演示版不会强制登录后才能收呼叫。
+              </p>
+            </form>
+
+            <form id="contact-link-form" class="form-stack server-box">
+              <strong>绑定紧急联系人</strong>
+              <label>
+                <span>所属用户</span>
+                <select id="contact-owner-user-id"></select>
+              </label>
+              <label>
+                <span>紧急联系人用户 ID</span>
+                <input id="contact-user-id" placeholder="例如 daughter_001" />
+              </label>
+              <label>
+                <span>关系说明</span>
+                <input id="contact-relationship" placeholder="例如 女儿 / 邻居 / 护工" />
+              </label>
+              <button class="primary-button" type="submit">绑定联系人</button>
+            </form>
+          </div>
+          <p id="account-feedback" class="panel-note"></p>
+          <div id="users-list" class="user-list"></div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Directory</p>
+              <h2>对象归属与呼叫对象配置</h2>
+            </div>
+          </div>
+          <div class="manager-grid">
+            <form id="profile-form" class="form-stack">
+              <input id="profile-id" type="hidden" />
+              <label>
+                <span>对象编号 / 设备编号</span>
+                <input id="profile-external-key" placeholder="例如 elder-1001 或 watch-1001" />
+              </label>
+              <label>
+                <span>显示名称</span>
+                <input id="profile-display-name" placeholder="例如 1 号手表 / 王阿姨" />
+              </label>
+              <label>
+                <span>所属用户</span>
+                <select id="profile-owner-user-id"></select>
+              </label>
+              <label>
+                <span>备注</span>
+                <textarea id="profile-notes" rows="3" placeholder="例如 房间号、病情、设备位置"></textarea>
+              </label>
+              <div class="button-row">
+                <button class="primary-button" type="submit">保存对象</button>
+                <button class="ghost-button" id="clear-profile-button" type="button">清空</button>
+              </div>
+            </form>
+
+            <form id="recipient-form" class="form-stack">
+              <input id="recipient-id" type="hidden" />
+              <strong>高级手动收件人</strong>
+              <p class="panel-note">
+                常规情况建议用上面的“正式账号体系”自动关联。这里保留给调试或兼容老数据时手动指定收件人。
+              </p>
+              <label>
+                <span>绑定对象</span>
+                <select id="recipient-profile-id"></select>
+              </label>
+              <label>
+                <span>家属名称</span>
+                <input id="recipient-name" placeholder="例如 张三女儿" />
+              </label>
+              <label>
+                <span>APP 用户 ID</span>
+                <input id="recipient-app-user-id" placeholder="例如 daughter_001" />
+              </label>
+              <label>
+                <span>设备 Token</span>
+                <input id="recipient-device-token" placeholder="例如 web-demo-token 或移动端 token" />
+              </label>
+              <div class="split-grid">
+                <label>
+                  <span>平台</span>
+                  <select id="recipient-platform">
+                    <option value="android">android</option>
+                    <option value="ios">ios</option>
+                    <option value="web">web</option>
+                  </select>
+                </label>
+                <label>
+                  <span>告警级别</span>
+                  <select id="recipient-severity">
+                    <option value="all">all</option>
+                    <option value="critical">critical</option>
+                    <option value="warning">warning</option>
+                    <option value="info">info</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                <span>优先级</span>
+                <input id="recipient-priority" type="number" min="1" value="1" />
+              </label>
+              <div class="button-row">
+                <button class="primary-button" type="submit">保存手动收件人</button>
+                <button class="ghost-button" id="clear-recipient-button" type="button">清空</button>
+              </div>
+            </form>
+          </div>
+          <p id="directory-feedback" class="panel-note"></p>
+          <div id="profiles-list" class="profiles-list"></div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Session Cleanup</p>
+              <h2>会话整理</h2>
+            </div>
+          </div>
+          <div class="helper-grid">
+            <div class="server-box">
+              <strong>只保留最新测试会话</strong>
+              <p class="panel-note">适合双机调试前快速清理旧测试，只保留最近一次告警和对应通话。</p>
+              <div class="button-row">
+                <button class="primary-button" id="keep-latest-button" type="button">只保留最新会话</button>
+              </div>
+            </div>
+            <div class="server-box">
+              <strong>清空全部旧会话</strong>
+              <p class="panel-note">适合从头重测，会清空事件、通话、参与者和信令数据。</p>
+              <div class="button-row">
+                <button class="ghost-button" id="clear-all-sessions-button" type="button">清空全部会话</button>
+              </div>
+            </div>
+          </div>
+          <p id="cleanup-feedback" class="panel-note"></p>
+        </section>
+
+        <section class="card">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Manual Test</p>
+              <h2>手动发送测试告警</h2>
+            </div>
+          </div>
+          <form id="test-form" class="form-stack">
+            <label>
+              <span>目标对象</span>
+              <select id="target-external-key">
+                <option value="">请选择对象</option>
+              </select>
+            </label>
+            <label>
+              <span>标题</span>
+              <input id="subject" value="跌倒告警" />
+            </label>
+            <label>
+              <span>级别</span>
+              <select id="severity">
+                <option value="critical">critical</option>
+                <option value="warning">warning</option>
+                <option value="info">info</option>
+              </select>
+            </label>
+            <label>
+              <span>内容</span>
+              <textarea id="content" rows="4">检测到老人疑似跌倒，请立即查看。</textarea>
+            </label>
+            <button class="primary-button" type="submit">发送测试告警</button>
+          </form>
+          <p id="form-feedback" class="panel-note"></p>
+        </section>
+
+        <section class="card">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Live Sessions</p>
+              <h2>当前可加入的语音会话</h2>
+            </div>
+          </div>
+          <div id="active-sessions-empty" class="empty-state">当前还没有正在等待或进行中的语音会话。</div>
+          <div id="active-sessions-list" class="event-list"></div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Recent Activity</p>
+              <h2>最近告警与通话记录</h2>
+            </div>
+          </div>
+          <div id="events-empty" class="empty-state">还没有收到任何告警。你可以先发送一条测试告警。</div>
+          <div id="events-list" class="event-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/api-config.js"></script>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

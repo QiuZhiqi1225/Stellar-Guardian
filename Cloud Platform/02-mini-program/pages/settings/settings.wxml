@@ -1,0 +1,45 @@
+<view class="page-shell">
+  <view class="hero-cover">
+    <view class="hero-kicker">SYSTEM CHECK</view>
+    <view class="hero-title">System Settings</view>
+    <view class="hero-text">Confirm the backend address and current notification target state.</view>
+    <view class="hero-badges">
+      <text class="hero-badge">Base URL</text>
+      <text class="hero-badge">Health</text>
+      <text class="hero-badge">Notify State</text>
+    </view>
+  </view>
+
+  <view class="panel-card panel-card-soft" style="margin-top: 24rpx;">
+    <view class="panel-title">Backend Connection</view>
+    <text class="field-label">Base URL</text>
+    <input class="text-input text-input-strong" value="{{baseUrl}}" placeholder="https://api.fallguard.cn" bindinput="handleBaseUrlInput" />
+    <view class="button-row">
+      <button class="primary-button" bindtap="saveBaseUrl">Save URL</button>
+      <button class="secondary-button" bindtap="refreshConfig">Refresh</button>
+    </view>
+    <view class="feedback" wx:if="{{feedback}}">{{feedback}}</view>
+  </view>
+
+  <view class="panel-card">
+    <view class="panel-title">Backend Capabilities</view>
+    <view class="mini-stat-grid">
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{emergencyCallNumber || "not set"}}</view>
+        <view class="mini-stat-label">Callback Number</view>
+      </view>
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{templateCount}}</view>
+        <view class="mini-stat-label">Templates</view>
+      </view>
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{miniProgramState || "unknown"}}</view>
+        <view class="mini-stat-label">Send State</view>
+      </view>
+    </view>
+    <view class="button-row">
+      <button class="ghost-button" bindtap="openHome">Home</button>
+      <button class="ghost-button" bindtap="openAccount">Account</button>
+    </view>
+  </view>
+</view>

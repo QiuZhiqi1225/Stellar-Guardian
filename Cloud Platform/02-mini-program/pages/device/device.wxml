@@ -1,0 +1,108 @@
+<view class="page-shell">
+  <view class="hero-cover">
+    <view class="hero-kicker">DEVICE BIND</view>
+    <view class="hero-title">设备登记与通知授权</view>
+    <view class="hero-text">先登记当前小程序，再绑定微信，最后申请订阅通知授权。</view>
+    <view class="hero-badges">
+      <text class="hero-badge">设备登记</text>
+      <text class="hero-badge">微信绑定</text>
+      <text class="hero-badge">订阅通知</text>
+    </view>
+  </view>
+
+  <view class="critical-alert-banner" wx:if="{{pendingCount > 0}}" bindtap="openLatestPendingAlert">
+    <view class="critical-alert-kicker">FALL ALERT</view>
+    <view class="critical-alert-title">收到跌倒告警</view>
+    <view class="critical-alert-text">{{criticalBannerText || "当前存在待处理跌倒告警，请立即查看。"}}</view>
+    <view class="critical-alert-action">点击立即查看告警详情</view>
+  </view>
+
+  <view class="panel-card panel-card-soft" style="margin-top: 24rpx;">
+    <view class="panel-title">当前设备</view>
+    <view class="panel-subtitle">每一步做完都会回后台复查一次真实状态。</view>
+
+    <text class="field-label">用户 ID</text>
+    <input class="text-input text-input-strong" value="{{appUserId}}" placeholder="例如 daughter_001" bindinput="handleAppUserIdInput" />
+
+    <text class="field-label">接收人名称</text>
+    <input class="text-input" value="{{recipientName}}" placeholder="例如 女儿 / 护工 / 家属" bindinput="handleRecipientNameInput" />
+
+    <text class="field-label">关联对象编号</text>
+    <input class="text-input" value="{{externalKey}}" placeholder="例如 watch-1001，可留空" bindinput="handleExternalKeyInput" />
+
+    <view class="button-row">
+      <button class="primary-button" loading="{{isRegistering}}" bindtap="registerMiniDevice">1. 登记设备</button>
+      <button class="secondary-button" loading="{{isBindingWechat}}" bindtap="bindWechatAccount">2. 绑定微信</button>
+    </view>
+
+    <view class="button-row">
+      <button class="ghost-button" loading="{{isSavingSubscribe}}" bindtap="requestSubscribePermission">3. 申请通知授权</button>
+    </view>
+
+    <view class="helper-text">每点一次授权，后端会重新查询真实可发送次数；收到一次通知后会自动扣减 1 次。</view>
+    <view class="helper-text">当前后端：{{currentBaseUrl}}</view>
+    <view class="helper-text" wx:if="{{lastSubscribeResultText}}">
+      最近一次微信授权返回：{{lastSubscribeResultText}}
+    </view>
+
+    <view class="feedback feedback-soft" wx:if="{{feedback}}">{{feedback}}</view>
+  </view>
+
+  <view class="panel-card">
+    <view class="panel-title">能力状态</view>
+    <view class="mini-stat-grid">
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{emergencyCallNumber || "未配置"}}</view>
+        <view class="mini-stat-label">通话号码</view>
+      </view>
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{subscribeTemplateIds.length}}</view>
+        <view class="mini-stat-label">通知模板</view>
+      </view>
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{wechatLoginReady ? "已就绪" : "未配置"}}</view>
+        <view class="mini-stat-label">微信登录</view>
+      </view>
+      <view class="mini-stat-card">
+        <view class="mini-stat-value">{{subscribeSendReady ? "可发送" : "待完善"}}</view>
+        <view class="mini-stat-label">通知发送</view>
+      </view>
+    </view>
+    <view class="helper-text">模板：{{templateIdsText || "暂无"}}</view>
+    <view class="helper-text" wx:if="{{runtimeAppId}}">
+      运行环境：{{runtimeEnvVersion || "unknown"}} / {{runtimeAppId}}
+    </view>
+  </view>
+
+  <view class="panel-card" wx:if="{{deviceStatus}}">
+    <view class="panel-title">当前绑定结果</view>
+    <view class="status-list">
+      <view class="status-item">
+        <text class="status-label">微信绑定</text>
+        <text class="status-value">{{deviceStatus.has_wechat_openid ? "已绑定" : "未绑定"}}</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">通知权限</text>
+        <text class="status-value">{{deviceStatus.notification_enabled ? "已授权" : "未授权"}}</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">可发次数</text>
+        <text class="status-value">{{deviceStatus.granted_template_count || deviceStatus.granted_template_ids.length}}</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">最近通知</text>
+        <text class="status-value">{{deviceStatus.last_notification_status || "暂无"}}</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">后端对象编号</text>
+        <text class="status-value">{{deviceStatus.external_key || "未绑定"}}</text>
+      </view>
+    </view>
+    <view class="helper-text" wx:if="{{deviceStatus.last_notification_error}}">
+      最近错误：{{deviceStatus.last_notification_error}}
+    </view>
+    <view class="helper-text" wx:if="{{deviceStatus.subscription_updated_at}}">
+      最近授权写入时间：{{deviceStatus.subscription_updated_at}}
+    </view>
+  </view>
+</view>

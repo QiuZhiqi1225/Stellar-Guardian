@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/account/account",
+    "pages/settings/settings",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/device/device",
+    "pages/alerts/alerts",
+    "pages/detail/detail"
+  ],
+  "window": {
+    "navigationBarTitleText": "Emergency Call",
+    "navigationBarBackgroundColor": "#144b63",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#eef4f8",
+    "backgroundTextStyle": "light"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

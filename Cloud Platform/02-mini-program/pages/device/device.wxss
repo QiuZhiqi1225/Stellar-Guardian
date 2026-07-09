@@ -1,0 +1,27 @@
+.status-list {
+  margin-top: 18rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 22rpx;
+  background: linear-gradient(180deg, #f8fbfd 0%, #eef6fb 100%);
+}
+
+.status-label {
+  color: #5f7388;
+  font-size: 24rpx;
+}
+
+.status-value {
+  color: #10243a;
+  font-size: 28rpx;
+  font-weight: 700;
+}

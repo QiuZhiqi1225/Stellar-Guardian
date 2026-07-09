@@ -1,0 +1,80 @@
+<view class="page-shell">
+  <view class="hero-cover">
+    <view class="hero-kicker">ALERT CENTER</view>
+    <view class="hero-title">待处理告警</view>
+    <view class="hero-text">查看会话、详情和处理动作。</view>
+    <view class="hero-badges">
+      <text class="hero-badge">刷新</text>
+      <text class="hero-badge">详情</text>
+      <text class="hero-badge">回拨</text>
+    </view>
+  </view>
+
+  <view class="panel-card panel-card-soft" style="margin-top: 24rpx;">
+    <view class="panel-title">告警中心</view>
+    <view class="panel-subtitle">当前账号：{{appUserId || "未登录"}}</view>
+    <view class="button-row">
+      <button class="primary-button" bindtap="refreshSessions">立即刷新</button>
+      <button class="ghost-button" bindtap="openAccountPage">账号中心</button>
+      <button class="ghost-button" bindtap="openSettingsPage">系统配置</button>
+    </view>
+    <view class="feedback" wx:if="{{feedback}}">{{feedback}}</view>
+  </view>
+
+  <view class="panel-card">
+    <view class="section-heading">
+      <view class="section-heading-text">待处理告警</view>
+      <text class="chip">{{pendingItems.length}} 条</text>
+    </view>
+
+    <view class="list-stack" wx:if="{{pendingItems.length}}">
+      <view class="alert-card" wx:for="{{pendingItems}}" wx:key="session_id">
+        <view class="card-head">
+          <view>
+            <view class="card-title">{{item.event_title || item.recipient_name}}</view>
+            <view class="card-meta">{{item.event_occurred_at || item.created_at}}</view>
+          </view>
+          <view class="severity-pill severity-pill-{{item.event_severity || 'info'}}">{{item.event_severity || item.status}}</view>
+        </view>
+        <view class="muted-text">{{item.event_body || item.detail}}</view>
+        <view class="meta-wrap" style="margin-top: 16rpx;">
+          <text class="chip">对象：{{item.target_external_key || "-"}}</text>
+          <text class="chip">会话：{{item.session_id}}</text>
+          <text class="chip">状态：{{item.status}}</text>
+        </view>
+        <view class="button-row">
+          <button class="primary-button" data-session-id="{{item.session_id}}" bindtap="markAccepted">标记接听</button>
+          <button class="secondary-button" data-session-id="{{item.session_id}}" bindtap="openDetail">查看详情</button>
+          <button class="danger-button" data-session-id="{{item.session_id}}" bindtap="markRejected">拒绝</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:else>当前没有待处理告警。</view>
+  </view>
+
+  <view class="panel-card">
+    <view class="section-heading">
+      <view class="section-heading-text">最近会话</view>
+      <button class="link-button" bindtap="makeEmergencyCall" disabled="{{!emergencyCallNumber}}">拨打回拨电话</button>
+    </view>
+
+    <view class="list-stack" wx:if="{{historyItems.length}}">
+      <view class="alert-card" wx:for="{{historyItems}}" wx:key="session_id">
+        <view class="card-head">
+          <view>
+            <view class="card-title">{{item.event_title || item.recipient_name}}</view>
+            <view class="card-meta">{{item.created_at}}</view>
+          </view>
+          <view class="status-pill">{{item.status}}</view>
+        </view>
+        <view class="muted-text">{{item.event_body || item.detail}}</view>
+        <view class="button-row">
+          <button class="ghost-button" data-session-id="{{item.session_id}}" bindtap="openDetail">查看详情</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:else>还没有历史会话。</view>
+  </view>
+</view>

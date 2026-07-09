@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>后端结果查看页</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Backend Results</p>
+          <h1>后端结果查看页</h1>
+          <p class="hero-text">
+            这个页面专门看三段链路有没有走通：华为云回调有没有到后端、后端有没有生成告警事件、微信小程序通知状态现在是什么。
+          </p>
+          <p class="hero-links">
+            <a href="/">返回管理台</a>
+            <a href="/events" target="_blank" rel="noreferrer">打开原始事件接口</a>
+          </p>
+        </div>
+        <div class="hero-status card">
+          <div class="status-row">
+            <span class="status-dot" id="debug-status-dot"></span>
+            <div>
+              <p class="label">查看状态</p>
+              <strong id="debug-service-status">加载中</strong>
+            </div>
+          </div>
+          <div class="mini-metrics">
+            <div>
+              <p class="label">最近云端回调</p>
+              <strong id="metric-webhook-count">0</strong>
+            </div>
+            <div>
+              <p class="label">最近告警事件</p>
+              <strong id="metric-event-count">0</strong>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Inspect</p>
+              <h2>查看设置</h2>
+            </div>
+            <button class="primary-button" id="debug-refresh-button" type="button">立即刷新</button>
+          </div>
+          <div class="helper-grid">
+            <div class="server-box form-stack">
+              <label>
+                <span>要查看通知状态的 app_user_id</span>
+                <input id="device-status-user-id" value="bajixiang" placeholder="例如 bajixiang" />
+              </label>
+              <div class="button-row">
+                <button class="ghost-button" id="save-device-user-button" type="button">保存并刷新</button>
+              </div>
+              <p class="panel-note" id="debug-feedback">页面会每 5 秒自动刷新一次。</p>
+            </div>
+            <div class="server-box">
+              <strong>当前查看接口</strong>
+              <div class="endpoint-list compact-endpoints">
+                <div class="endpoint">
+                  <span>华为云回调审计</span>
+                  <code id="debug-huawei-url">-</code>
+                </div>
+                <div class="endpoint">
+                  <span>后端事件结果</span>
+                  <code id="debug-events-url">-</code>
+                </div>
+                <div class="endpoint">
+                  <span>设备通知状态</span>
+                  <code id="debug-device-url">-</code>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="metric-strip" id="debug-summary-cards"></div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Huawei IoTDA</p>
+              <h2>华为云回调审计</h2>
+            </div>
+          </div>
+          <div id="huawei-audit-empty" class="empty-state">还没有抓到最近的华为云回调。</div>
+          <div id="huawei-audit-list" class="event-list"></div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Backend Dispatch</p>
+              <h2>后端告警派发结果</h2>
+            </div>
+          </div>
+          <div id="dispatch-events-empty" class="empty-state">还没有可展示的后端告警结果。</div>
+          <div id="dispatch-events-list" class="event-list"></div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Mini Program</p>
+              <h2>微信通知状态</h2>
+            </div>
+          </div>
+          <div id="device-status-empty" class="empty-state">还没有查到这个用户的设备通知状态。</div>
+          <div id="device-status-card"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/api-config.js"></script>
+    <script src="/static/backend-results.js"></script>
+  </body>
+</html>

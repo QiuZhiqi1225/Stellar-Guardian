@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>实时语音通话房间</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell call-shell">
+      <header class="hero call-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">WebRTC Voice Room</p>
+          <h1>实时语音通话房间</h1>
+          <p class="hero-text">
+            进入这个页面后，系统会自动尝试加入当前会话。只要两边的共享后端地址一致、会话 ID 一致，并允许麦克风权限，就能开始真实语音通话。
+          </p>
+          <p class="hero-links">
+            <a href="/">返回控制台</a>
+            <a href="/caregiver-demo">家属端</a>
+            <a href="/device-demo">设备端</a>
+          </p>
+        </div>
+        <div class="hero-status card">
+          <div class="status-row">
+            <span class="status-dot" id="room-status-dot"></span>
+            <div>
+              <p class="label">连接状态</p>
+              <strong id="room-status">准备中</strong>
+            </div>
+          </div>
+          <div class="mini-metrics">
+            <div>
+              <p class="label">会话 ID</p>
+              <strong id="room-session-id">-</strong>
+            </div>
+            <div>
+              <p class="label">远端数量</p>
+              <strong id="room-remote-count">0</strong>
+            </div>
+          </div>
+          <div class="mini-metrics">
+            <div>
+              <p class="label">共享后端</p>
+              <code id="room-backend-url">-</code>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid caregiver-grid">
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Tips</p>
+              <h2>房间内判断标准</h2>
+            </div>
+          </div>
+          <div class="helper-grid">
+            <div class="empty-state">
+              <strong>1. 看共享后端</strong>
+              <p class="panel-note">主机页通常显示本机地址，第二台电脑应显示主机的局域网地址。两边必须指向同一个后端。</p>
+            </div>
+            <div class="empty-state">
+              <strong>2. 看会话 ID</strong>
+              <p class="panel-note">两边房间页右上角的会话 ID 必须完全一样，否则一定不是同一场通话。</p>
+            </div>
+            <div class="empty-state">
+              <strong>3. 看房间参与者</strong>
+              <p class="panel-note">当参与者列表里同时出现家属端和设备端，远端数量变成 1 时，就说明两边进到了同一场通话。</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Identity</p>
+              <h2>加入设置</h2>
+            </div>
+          </div>
+          <form id="join-form" class="form-stack">
+            <label>
+              <span>加入角色</span>
+              <select id="join-role">
+                <option value="caregiver">caregiver</option>
+                <option value="device">device</option>
+                <option value="operator">operator</option>
+                <option value="observer">observer</option>
+              </select>
+            </label>
+            <label>
+              <span>显示名称</span>
+              <input id="join-label" placeholder="例如 邱智齐妈妈 / 床头终端" />
+            </label>
+            <label>
+              <span>参与者 ID</span>
+              <input id="join-participant-id" readonly />
+            </label>
+            <button class="primary-button" type="submit">加入语音房间</button>
+          </form>
+          <p id="join-feedback" class="panel-note"></p>
+        </section>
+
+        <section class="card">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Call Controls</p>
+              <h2>通话控制</h2>
+            </div>
+          </div>
+          <div class="form-stack">
+            <div class="attempt-tags">
+              <span class="chip" id="local-audio-state">本地麦克风未启动</span>
+              <span class="chip" id="remote-audio-state">远端音频未连接</span>
+            </div>
+            <div class="button-row">
+              <button class="primary-button" id="start-call-button" type="button">开始协商通话</button>
+              <button class="ghost-button" id="mute-button" type="button">静音麦克风</button>
+              <button class="ghost-button" id="end-call-button" type="button">结束通话</button>
+            </div>
+            <audio id="remote-audio" autoplay playsinline></audio>
+          </div>
+          <p class="panel-note">如果你已经从家属端或设备端页面进入，本页通常会自动加入，无需重复点击。</p>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Participants</p>
+              <h2>房间参与者</h2>
+            </div>
+          </div>
+          <div id="participants-empty" class="empty-state">还没有其他参与者加入。</div>
+          <div id="participants-list" class="event-list"></div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Logs</p>
+              <h2>连接日志</h2>
+            </div>
+          </div>
+          <div id="log-list" class="log-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/api-config.js"></script>
+    <script src="/static/call-room.js"></script>
+  </body>
+</html>

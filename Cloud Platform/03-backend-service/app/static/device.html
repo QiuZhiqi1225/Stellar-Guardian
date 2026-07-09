@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>设备端语音通话 Demo</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell caregiver-shell">
+      <header class="hero caregiver-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Device Demo</p>
+          <h1>设备端语音通话 Demo</h1>
+          <p class="hero-text">
+            设备端的顺序是：先连共享后端，再保存设备显示名称，然后刷新会话列表，最后从列表里进入和主机相同的那条会话。
+          </p>
+          <p class="hero-links">
+            <a href="/">返回管理控制台</a>
+            <a href="/caregiver-demo">打开家属端演示</a>
+          </p>
+        </div>
+        <div class="hero-status card">
+          <div class="status-row">
+            <span class="status-dot" id="device-status-dot"></span>
+            <div>
+              <p class="label">设备端状态</p>
+              <strong id="device-status">待命中</strong>
+            </div>
+          </div>
+          <div class="mini-metrics">
+            <div>
+              <p class="label">设备标签</p>
+              <strong id="device-label-preview">-</strong>
+            </div>
+            <div>
+              <p class="label">活跃会话数</p>
+              <strong id="device-session-count">0</strong>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid caregiver-grid">
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Tips</p>
+              <h2>操作提示</h2>
+            </div>
+          </div>
+          <div class="helper-grid">
+            <div class="empty-state">
+              <strong>第一步</strong>
+              <p class="panel-note">第二台电脑要先连到主机后端，否则刷新出来的会话列表可能为空，或者看到的不是主机那一条。</p>
+            </div>
+            <div class="empty-state">
+              <strong>第二步</strong>
+              <p class="panel-note">先保存设备显示名称，再加入会话。这样进入语音房间后，主机能更清楚地看到远端参与者。</p>
+            </div>
+            <div class="empty-state">
+              <strong>第三步</strong>
+              <p class="panel-note">一定要从本页的会话列表进入，不要复用旧房间窗口。</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Shared Backend</p>
+              <h2>共享后端地址</h2>
+            </div>
+          </div>
+          <div class="server-box">
+            <label>
+              <span>当前连接的服务端</span>
+              <input id="device-server-base-url" placeholder="例如 http://192.168.1.20:8010" />
+            </label>
+            <div class="button-row">
+              <button class="primary-button" id="device-save-server-button" type="button">保存并连接</button>
+              <button class="ghost-button" id="device-reset-server-button" type="button">恢复本机</button>
+            </div>
+            <p id="device-server-feedback" class="panel-note">
+              如果设备端在第二台电脑运行，这里要填写主机电脑首页显示的共享主机对外地址。
+            </p>
+          </div>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Background Alert</p>
+              <h2>后台预警守护</h2>
+            </div>
+          </div>
+          <div class="helper-grid">
+            <div class="empty-state">
+              <strong>作用</strong>
+              <p class="panel-note">启用后，就算设备端主窗口关闭，只要这台电脑还在运行守护程序，新的紧急会话也会直接弹出本地提醒窗口。</p>
+            </div>
+            <div class="empty-state">
+              <strong>建议</strong>
+              <p class="panel-note">先完成“共享后端地址 + 设备名称保存”，再点击下面的“保存并启动后台预警”。如果要长期挂机，建议同时开启开机自启。</p>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" id="device-agent-save-button" type="button">保存并启动后台预警</button>
+            <button class="ghost-button" id="device-agent-startup-on-button" type="button">开启开机自启</button>
+            <button class="ghost-button" id="device-agent-startup-off-button" type="button">关闭开机自启</button>
+          </div>
+          <p id="device-agent-feedback" class="panel-note">后台预警未启用。</p>
+        </section>
+
+        <section class="card">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Profile</p>
+              <h2>设备身份</h2>
+            </div>
+          </div>
+          <form id="device-profile-form" class="form-stack">
+            <label>
+              <span>设备显示名称</span>
+              <input id="device-label" placeholder="例如 邱智齐手表 / 床头终端" />
+            </label>
+            <label>
+              <span>设备参与者 ID</span>
+              <input id="device-participant-id" readonly />
+            </label>
+            <button class="primary-button" type="submit">保存本地身份</button>
+          </form>
+          <p id="device-feedback" class="panel-note"></p>
+        </section>
+
+        <section class="card panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Available Sessions</p>
+              <h2>可加入的语音会话</h2>
+            </div>
+            <button class="ghost-button" id="device-refresh-button" type="button">立即刷新</button>
+          </div>
+          <div id="device-empty" class="empty-state">当前没有活跃语音会话。建议先回主机控制台发送 1 条新的测试告警。</div>
+          <div id="device-session-list" class="event-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="alert-overlay" id="device-alert-overlay" aria-hidden="true">
+      <div class="alert-backdrop"></div>
+      <section class="alert-panel" role="alertdialog" aria-modal="true" aria-labelledby="device-alert-title">
+        <p class="alert-kicker">Emergency Alert</p>
+        <h2 class="alert-title" id="device-alert-title">收到新的紧急会话</h2>
+        <p class="alert-message" id="device-alert-message">主机已经发出新的紧急呼叫，请尽快进入对应会话。</p>
+        <div class="alert-meta" id="device-alert-meta"></div>
+        <div class="alert-actions">
+          <button class="primary-button" id="device-alert-open-button" type="button">立即进入</button>
+          <button class="ghost-button" id="device-alert-dismiss-button" type="button">稍后处理</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="/static/api-config.js"></script>
+    <script src="/static/device.js"></script>
+  </body>
+</html>

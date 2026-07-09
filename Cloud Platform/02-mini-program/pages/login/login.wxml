@@ -1,0 +1,22 @@
+<view class="page-shell">
+  <view class="hero-cover">
+    <view class="hero-kicker">LOGIN</view>
+    <view class="hero-title">切换到已有账号</view>
+    <view class="hero-text">确认账号后直接进入。</view>
+  </view>
+
+  <view class="panel-card panel-card-soft" style="margin-top: 24rpx;">
+    <view class="section-heading">
+      <view class="panel-title">登录</view>
+      <button class="link-button" bindtap="openRegister">去注册</button>
+    </view>
+    <text class="field-label">用户 ID</text>
+    <input class="text-input text-input-strong" value="{{appUserId}}" placeholder="例如 daughter_001" bindinput="handleAppUserIdInput" />
+    <text class="field-label">登录口令</text>
+    <input class="text-input" password="{{true}}" value="{{secret}}" placeholder="输入口令" bindinput="handleSecretInput" />
+    <view class="button-row">
+      <button class="primary-button" bindtap="loginUser">立即登录</button>
+    </view>
+    <view class="feedback feedback-soft" wx:if="{{feedback}}">{{feedback}}</view>
+  </view>
+</view>

@@ -1,0 +1,76 @@
+<view class="page-shell">
+  <view class="hero-cover" wx:if="{{session}}">
+    <view class="hero-kicker">ALERT DETAIL</view>
+    <view class="hero-title">{{session.event_title || session.recipient_name}}</view>
+    <view class="hero-text">{{session.event_body || session.detail}}</view>
+    <view class="hero-badges">
+      <text class="hero-badge">对象 {{session.target_external_key || "-"}}</text>
+      <text class="hero-badge">状态 {{session.status}}</text>
+      <text class="hero-badge" wx:if="{{session.hasLocation}}">已上传位置</text>
+    </view>
+  </view>
+
+  <view class="detail-card" wx:if="{{session}}" style="margin-top: 24rpx;">
+    <view class="card-head">
+      <view>
+        <view class="card-title">{{session.event_title || session.recipient_name}}</view>
+        <view class="card-meta">{{session.event_occurred_at || session.created_at}}</view>
+      </view>
+      <view class="severity-pill severity-pill-{{session.event_severity || 'info'}}">{{session.event_severity || session.status}}</view>
+    </view>
+
+    <view class="muted-text" style="margin-top: 18rpx;">{{session.event_body || session.detail}}</view>
+
+    <view class="panel-card" style="margin-top: 24rpx;">
+      <view class="panel-title">告警信息</view>
+      <view class="meta-wrap" style="margin-top: 16rpx;">
+        <text class="chip">对象编号：{{session.target_external_key || "-"}}</text>
+        <text class="chip">对象名称：{{session.profile_display_name || "-"}}</text>
+        <text class="chip">会话状态：{{session.status}}</text>
+        <text class="chip">会话 ID：{{session.session_id}}</text>
+      </view>
+    </view>
+
+    <view class="panel-card" style="margin-top: 24rpx;" wx:if="{{session.hasLocation}}">
+      <view class="panel-title">跌倒位置</view>
+      <view class="muted-text" style="margin-top: 12rpx;" wx:if="{{session.location.label}}">
+        {{session.location.label}}
+      </view>
+      <view class="meta-wrap" style="margin-top: 16rpx;">
+        <text class="chip">纬度：{{session.locationLatitudeText}}</text>
+        <text class="chip">经度：{{session.locationLongitudeText}}</text>
+      </view>
+      <map
+        class="location-map"
+        latitude="{{session.location.latitude}}"
+        longitude="{{session.location.longitude}}"
+        scale="16"
+        markers="{{mapMarkers}}"
+        style="margin-top: 20rpx;"
+      />
+      <view class="button-row">
+        <button class="primary-button" bindtap="openLocation">打开导航</button>
+        <button class="ghost-button" bindtap="copyCoordinates">复制坐标</button>
+      </view>
+    </view>
+
+    <view class="panel-card" style="margin-top: 24rpx;" wx:if="{{!session.hasLocation}}">
+      <view class="panel-title">跌倒位置</view>
+      <view class="muted-text" style="margin-top: 12rpx;">
+        当前这条告警还没有随设备一起上传经纬度，所以这里暂时无法显示地图。
+      </view>
+    </view>
+
+    <view class="panel-card" style="margin-top: 24rpx;">
+      <view class="panel-title">操作</view>
+      <view class="button-row">
+        <button class="danger-button" bindtap="makeEmergencyCall" disabled="{{!session.callback_phone}}">拨打 {{session.callback_phone || "未配置"}}</button>
+        <button class="primary-button" bindtap="markAccepted">标记接听</button>
+        <button class="secondary-button" bindtap="markEnded">标记结束</button>
+        <button class="ghost-button" bindtap="markRejected">标记拒绝</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="feedback" wx:if="{{feedback}}">{{feedback}}</view>
+</view>

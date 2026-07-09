@@ -1,0 +1,9 @@
+.hero-card {
+  background: linear-gradient(135deg, #164e63, #0f766e);
+  color: #ffffff;
+}
+
+.hero-title,
+.hero-text {
+  color: #ffffff;
+}
